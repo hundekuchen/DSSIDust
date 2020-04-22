@@ -1,0 +1,132 @@
+import time
+import subprocess
+
+#testing
+import urllib.request
+import urllib
+import re
+import os
+import network
+import time
+import subprocess
+import sqlite3
+
+
+from matplotlib import style
+style.use('fivethirtyeight')
+
+#webscraping
+from pathlib import Path #TODO: handle the chromedriver path with this library
+from datetime import datetime
+from bs4 import *
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import TimeoutException
+
+class FDSHandler:
+    def __init__(self, cd_path, mfds_url, fds_waittime):
+    #windows path and linux path
+    #chromedriver_path='C:/Users/kontr/AppData/Local/Programs/Python/Python37-32/chromedriver'
+        #self.chromedriver_path = '/usr/lib/chromium-browser/'
+        #self.fds_url = 'http://dssifds.iptime.org:8080/'
+        #self.fds_wait = 30
+        self.chromedriver_path = cd_path
+        self.fds_url = mfds_url
+        self.fds_wait = fds_waittime
+    
+    
+        
+    def checkWlan(self, wlanName):#check if correct wlan is used
+        mstr = subprocess.check_output("netsh wlan show interface", encoding = 'utf-8', errors='ignore')
+        if wlanName in mstr:
+            print(wlanName + " is correctly used")
+            return True
+        else:
+            print(wlanName + " is NOT used")
+            return False
+
+    def read_dust(self):
+        # create a new Chrome session
+        options = webdriver.ChromeOptions()
+        options.add_argument('--ignore-certificate-errors')
+        options.add_argument('--incognito')
+        options.add_argument('--headless')
+        options.add_argument('--disable-dev-shm-usage')
+        options.add_argument('--no-sandbox')
+        
+        
+        print("creating webdriver with option")
+        print('CD_path : ', self.chromedriver_path, ' fds-url: ', self.fds_url, ' fds_wait : ' , self.fds_wait)
+        #driver = webdriver.Chrome(self.chromedriver_path,chrome_options=options)
+        driver = webdriver.Chrome(self.chromedriver_path,chrome_options=options)
+        
+        #'C:/Users/kontr/AppData/Local/Programs/Python/Python37-32/chromedriver'
+        print("wait implicitly")
+        #wait not working?
+        driver.implicitly_wait(15)
+        driver.set_page_load_timeout(15)
+        url = self.fds_url
+        #'http://dssifds.iptime.org:8080/'
+        print("load url")
+        driver.set_page_load_timeout(5)
+        try :
+            driver.get(url)
+            print("URL successfully Accessed")
+           #create the webpage with dynamic content
+            print("waiting for fds to write data")
+            time.sleep(self.fds_wait)
+            print("create webpage source")
+            page_source = driver.page_source
+    
+            #parse the webpage
+            print("hand webpage source to beautifulsoup")
+            soup = BeautifulSoup(page_source,'html.parser')
+
+            dust="string"
+            dust = soup.find(id="dust")
+            #print(dust)
+            #print("dusttype is " , type(dust))
+            if dust is not None:
+                #print("dustText", dust.get_text())
+                dustText = dust.get_text()
+                driver.close()
+                driver.quit()
+                return dustText
+            else:
+                driver.close()
+                driver.quit()
+                return "error"
+        except TimeoutException as e:
+            print("exception (timeout?) error: ",e)
+            driver.close()
+            driver.quit()
+            return "error"
+
+
+
+    def text_to_list(self, dustRaw):
+    #make dustsensor data readable
+        dustWithTime = "error"
+        if dustRaw!="error" and dustRaw is not None and len(dustRaw)>35:
+            dustRaw=dustRaw[13:]
+            #print(dustRaw)
+            dataSplit = dustRaw.split(" ")
+            pm25=dataSplit[0].split()[0]
+            pm10=dataSplit[3].split()[0]
+            pm10=pm10.strip("<b>")
+            #print ("pm25" , pm25, " pm10 ", pm10)
+            now = datetime.now()
+            nowString = now.strftime('%Y-%m-%d %H:%M:%S')
+            dustWithTime=[pm25 ,pm10 , nowString]
+            #print(dustWithTime)
+            return dustWithTime
+        else:
+            print("converting dustRaw to data failed") #todo tell which error
+            return "error" #converting dustRaw to data failed
+    
+    def get_dust_list(self):
+        dust_text = self.read_dust()
+        dust_list = self.text_to_list(dust_text)
+        return dust_list
+        
+

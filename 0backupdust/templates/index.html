@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Luftdaten DSSI</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+#dustTable {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+    table-layout: fixed;
+  width= 100%;
+}
+
+#dustTable td, #dustTable th {
+  border: 1px solid #ddd;
+  padding: 8px;
+
+}
+
+#dustTable tr:hover {background-color: #ddd;}
+
+#dustTable th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: Yellow;
+  color: black;
+}
+
+*{
+  box-sizing: border-box;
+}
+
+
+
+body {
+  margin: 0;
+}
+
+
+.dustAct{
+  width: 85%;
+  margin: 20px auto;
+  background-color: {{AQIColor}}
+}
+
+/* Style the header */
+.header {
+  background-color: #f1f1f1;
+  padding: 1px;
+  text-align: center;
+}
+/*two equal columns that floats next to each other */
+.column {
+  float: left;
+  width: 46%;
+  padding: 5px;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Responsive layout - makes the three columns stack on top of each other instead of next to each other */
+@media screen and (max-width:600px) {
+  .column {
+    width: 100%;
+  }
+}
+</style>
+</head>
+<body>
+  <div class = "header">
+    <p style="font-family:Trebuchet MS">Luftdaten Dsseoul</p>
+  </div>
+
+<div class="row">
+  <div class="column">
+    <div class="dustAct">
+      <h1>AQI: {{AQI}}</h1>
+      <p>PM2.5: {{pm25}}</p>
+      <p>PM10: {{pm10}}</p>
+      <p>Gemessen um: {{time}}</p>
+    </div>
+    <p style="font-family:Trebuchet MS">Konsequenzen für</p>
+    <table id="dustTable">
+  <tr>
+    <th>Kindergarten</th>
+    <th>Grundschule</th>
+    <th>Sekundarstufe</th>
+  </tr>
+  <tr>
+    <td style="background: {{kg_color}}">{{KindergartenText}}</td>
+    <td style="background: {{gs_color}}">{{GrundschuleText}}</td>
+    <td style="background: {{ss_color}}">{{SekundarstufeText}}</td>
+  </tr>
+  </table>
+  </div>
+  
+</div>
+<div class="header" style="width : 100%; font-family:Trebuchet MS; position: absolute; bottom: 1px;">
+<p ><p>MfG, die ProgrammierAG</p></div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,102 @@
+<meta http-equiv="refresh" content="300">
+<!DOCTYPE html>
+<html>
+<body>
+
+<style>
+#AQIAndGraph
+{
+    width: 100%;
+    height:235px;
+  
+}
+
+#AQIfield
+{
+	width: 28%;
+    height: 100%;
+	background-color: {{AQIColor}};
+    float: left;
+    padding: 10px;
+    border: 3px solid #ddd;
+}
+
+#Graphfield
+{
+    width: 50%;
+    height:100%;
+    float: left;
+    background-color: white;
+}
+
+#AQI {
+  text-align: left;
+  color: black;
+  font-size: 30px;
+}
+
+#pm
+{
+  text-align: left;
+  color: black;
+  font-size:10px;
+}
+
+#Konsequenz
+{
+  	table-layout: fixed;
+    width: 100%;
+    height: 165px;
+    border-collapse: collapse;
+	background: white;
+}
+
+#Konsequenz th {
+  width: 33%;
+  border: 3px solid #ddd;
+  padding: 15px;
+  background: pink;
+}
+
+#Konsequenz td
+{
+  border: 3px solid #ddd;
+  font-size: 10px;
+  height: 100px;
+  padding: 15px;
+}
+
+
+
+</style>
+<div  id="AQIAndGraph">
+  <div id="AQIfield">
+  	<div id="AQI">
+  		AQI = {{AQI}}
+  	</div>
+    <div id="pm">
+    	pm25 = {{pm25}} <br>
+        pm10 = {{pm10}} <br>
+		gemessen um: {{time}}
+    </div>
+  </div>
+  <div id = "Graphfield">
+	{{html_graph|safe}}
+  </div>
+</div>
+<br>
+<table id = "Konsequenz">
+    <tr>
+    	<th> Kindergarten </th>
+        <th> Grundschule </th>
+        <th> Sekundarstufe </th>
+    </tr>
+        
+     <tr>
+     	<td  style="background: {{kg_color}}"> {{KindergartenText}}</td>
+        <td  style="background: {{gs_color}}"> {{GrundschuleText}} </td>
+        <td  style="background: {{ss_color}}"> {{SekundarstufeText}} </td>
+     </tr>
+</table>
+</body>
+</html>
